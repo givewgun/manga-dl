@@ -1,0 +1,13 @@
+node_modules/
+dist/
+dist-renderer/
+dist-renderer-types/
+coverage/
+*.tsbuildinfo
+.vite/
+.cache/
+playwright/.auth/
+*.log
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

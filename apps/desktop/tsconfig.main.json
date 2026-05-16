@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "composite": true,
+    "types": ["node"]
+  },
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/sources" },
+    { "path": "../../packages/downloader" },
+    { "path": "../../packages/persistence" }
+  ],
+  "include": ["src/main/**/*", "src/preload/**/*"]
+}
