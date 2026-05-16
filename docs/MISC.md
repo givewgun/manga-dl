@@ -105,70 +105,83 @@ This runs Electron against the built main/preload/renderer output. It is useful 
 
 ## Publishing To Other Desktops
 
-The project currently builds app code, but it does not yet package an installer or standalone executable.
+The project has Electron Builder support for Windows installer and portable executable output.
 
-To distribute MangaDL to another desktop, add a packaging tool such as:
-
-- `electron-builder`
-- Electron Forge
-
-For this project, `electron-builder` is likely the simplest Windows-first choice.
-
-Example install command:
+Build an unpacked app directory for smoke testing:
 
 ```powershell
-npm install -D electron-builder
+npm run package:dir
 ```
 
-Example packaging config direction for `apps/desktop/package.json`:
+Build Windows installer and portable `.exe` artifacts:
+
+```powershell
+npm run package:win
+```
+
+The output is written under:
+
+```text
+release/dist/
+  win-unpacked/
+    MangaDL.exe
+  MangaDL Setup 0.1.0.exe
+  MangaDL 0.1.0.exe
+  MangaDL Setup 0.1.0.exe.blockmap
+  latest.yml
+```
+
+The two top-level `.exe` files serve different purposes:
+
+- `MangaDL Setup 0.1.0.exe`: NSIS installer.
+- `MangaDL 0.1.0.exe`: portable executable.
+
+Publish a GitHub release through Electron Builder:
+
+```powershell
+$env:GH_TOKEN = "<github-token-with-repo-scope>"
+npm run publish:github
+```
+
+The publishing command uses the GitHub provider configured in the staged Electron Builder package:
 
 ```json
 {
-  "scripts": {
-    "pack": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder"
-  },
-  "build": {
-    "appId": "com.mangadl.desktop",
-    "productName": "MangaDL",
-    "directories": {
-      "output": "../../release"
-    },
-    "files": [
-      "dist/**",
-      "dist-renderer/**",
-      "package.json"
-    ],
-    "win": {
-      "target": ["nsis", "portable"]
-    }
+  "publish": {
+    "provider": "github",
+    "owner": "givewgun",
+    "repo": "manga-dl"
   }
 }
 ```
 
-Then a Windows installer build would be:
-
-```powershell
-npm run dist -w @mangadl/desktop
-```
-
-Expected output would be under a release folder, for example:
-
-```text
-release/
-  MangaDL Setup 0.1.0.exe
-  MangaDL 0.1.0.exe
-```
-
 ## Packaging Caveats
 
-Packaging needs to be tested rather than assumed because this is an npm workspace app. Electron needs:
+Packaging uses a staging directory because this is an npm workspace app. The packaging flow:
 
-- Compiled main and preload output.
-- Built renderer assets.
-- Runtime dependencies.
-- Correct workspace package resolution.
-- Native/runtime modules included correctly.
+1. Builds all workspaces.
+2. Copies compiled Electron main/preload output into `release/stage/dist`.
+3. Copies the built renderer into `release/stage/dist-renderer`.
+4. Installs production runtime dependencies into `release/stage`.
+5. Vendors compiled workspace packages into `release/stage/node_modules/@mangadl`.
+6. Runs Electron Builder from `release/stage`.
+
+Local builds are unsigned. The staged Electron Builder config sets:
+
+```json
+{
+  "win": {
+    "signAndEditExecutable": false
+  }
+}
+```
+
+This avoids Electron Builder's Windows code-sign helper, which can fail on machines without symlink privileges. For public distribution, add:
+
+- A real app icon.
+- A Windows code-signing certificate.
+- Signed installer/portable artifacts.
+- A tested update/release policy.
 
 Before publishing, the default download root should also become portable. It currently defaults to:
 

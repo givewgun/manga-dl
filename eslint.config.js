@@ -9,6 +9,7 @@ export default tseslint.config(
       "**/dist/**",
       "**/dist-renderer-types/**",
       "**/coverage/**",
+      "release/**",
       "node_modules/**",
       "apps/desktop/dist-renderer/**"
     ]

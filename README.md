@@ -76,6 +76,42 @@ Clean build artifacts:
 npm run clean
 ```
 
+## Packaging
+
+MangaDL uses Electron Builder to create Windows desktop artifacts.
+
+Build an unpacked app directory for smoke testing:
+
+```powershell
+npm run package:dir
+```
+
+Build Windows installer and portable executables:
+
+```powershell
+npm run package:win
+```
+
+The packaged output is written to `release/dist`:
+
+```text
+release/dist/
+  win-unpacked/
+    MangaDL.exe
+  MangaDL Setup 0.1.0.exe
+  MangaDL 0.1.0.exe
+  latest.yml
+```
+
+Publish a GitHub release with Electron Builder:
+
+```powershell
+$env:GH_TOKEN = "<github-token-with-repo-scope>"
+npm run publish:github
+```
+
+Local Windows builds are unsigned. That is intentional for now: the packaging config disables executable signing/editing so builds work without Windows symlink privileges or a code-signing certificate. Add a real icon and signing certificate before public distribution.
+
 ## Workspace Layout
 
 ```text
@@ -89,6 +125,10 @@ packages/
 scripts/
   run-electron.mjs  Electron launcher that avoids ELECTRON_RUN_AS_NODE leakage
   clean.mjs         Build artifact cleanup
+  prepare-electron-package.mjs
+                    Stages a production Electron app for Electron Builder
+  vendor-electron-workspaces.mjs
+                    Vendors compiled workspace packages into the staged app
 docs/
   ARCHITECTURE.md   System architecture and data flow
   adr/              Architecture decision records

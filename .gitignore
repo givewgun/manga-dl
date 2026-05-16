@@ -3,6 +3,7 @@ dist/
 dist-renderer/
 dist-renderer-types/
 coverage/
+release/
 *.tsbuildinfo
 .vite/
 .cache/

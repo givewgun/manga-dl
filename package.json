@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Desktop manga/manhwa reader and resilient downloader.",
+  "author": "Gun Kaewngarm <aongoong.gk@gmail.com>",
   "workspaces": [
     "packages/core",
     "packages/sources",
@@ -18,7 +19,11 @@
     "lint": "eslint .",
     "test": "vitest run",
     "typecheck": "tsc -b packages/core packages/sources packages/persistence packages/downloader apps/desktop/tsconfig.main.json apps/desktop/tsconfig.renderer.json",
-    "clean": "node ./scripts/clean.mjs"
+    "clean": "node ./scripts/clean.mjs",
+    "package:prepare": "npm run build && node ./scripts/prepare-electron-package.mjs && npm install --prefix release/stage --omit=dev --ignore-scripts --no-audit --no-fund && node ./scripts/vendor-electron-workspaces.mjs",
+    "package:dir": "npm run package:prepare && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --projectDir release/stage --dir",
+    "package:win": "npm run package:prepare && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --projectDir release/stage --win",
+    "publish:github": "npm run package:prepare && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --projectDir release/stage --win --publish always"
   },
   "engines": {
     "node": ">=24.0.0"
@@ -26,6 +31,8 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
+    "cross-env": "^10.1.0",
+    "electron-builder": "^26.8.1",
     "eslint": "^9.39.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.4",
