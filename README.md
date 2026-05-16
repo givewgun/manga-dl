@@ -141,6 +141,7 @@ See [Architecture](docs/ARCHITECTURE.md) for the source lifecycle and extension 
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Miscellaneous Notes](docs/MISC.md)
 - [ADR Index](docs/adr/README.md)
 - [ADR 0001: TypeScript, Electron, React, and Vite](docs/adr/0001-typescript-electron-react-vite.md)
 - [ADR 0002: Source Adapter and Manifest Architecture](docs/adr/0002-source-adapter-and-manifest-architecture.md)
